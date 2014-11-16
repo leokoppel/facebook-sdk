@@ -33,7 +33,7 @@ if user:
 
 """
 
-import urllib
+import urllib.request, urllib.parse, urllib.error
 import hashlib
 import hmac
 import base64
@@ -45,7 +45,7 @@ import re
 try:
     from urllib.parse import parse_qs
 except ImportError:
-    from urlparse import parse_qs
+    from urllib.parse import parse_qs
 
 from . import version
 
@@ -395,7 +395,7 @@ def parse_signed_request(signed_request, app_secret):
 
     """
     try:
-        encoded_sig, payload = map(str, signed_request.split('.', 1))
+        encoded_sig, payload = list(map(str, signed_request.split('.', 1)))
 
         sig = base64.urlsafe_b64decode(encoded_sig + "=" *
                                        ((4 - len(encoded_sig) % 4) % 4))
@@ -432,7 +432,7 @@ def auth_url(app_id, canvas_url, perms=None, **kwargs):
     if perms:
         kvps['scope'] = ",".join(perms)
     kvps.update(kwargs)
-    return url + urllib.urlencode(kvps)
+    return url + urllib.parse.urlencode(kvps)
 
 
 def get_access_token_from_code(code, redirect_uri, app_id, app_secret):
